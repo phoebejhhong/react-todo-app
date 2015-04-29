@@ -32,10 +32,9 @@ var app = app || {};
     render: function() {
       var todos = this.props.data.map(function(todo) {
         return (
-          <li completed={todo.completed}>
-            <input className="toggle" type="checkbox" />
-            <label>{todo.text}</label>
-          </li>
+          <TodoItem
+            todo={todo}
+          />
         );
       });
       return (
@@ -48,9 +47,16 @@ var app = app || {};
 
   var TodoItem = React.createClass({
     render: function() {
+      var todo = this.props.todo;
+      var liClassName = (todo.completed === "true" ? 'completed' : '');
+
       return (
-        <li className="todo-item">
-          <p>I am todoItem</p>
+        <li className={liClassName}>
+          <input
+            className="toggle"
+            type="checkbox"
+           />
+          <label>{todo.text}</label>
         </li>
       );
     },
