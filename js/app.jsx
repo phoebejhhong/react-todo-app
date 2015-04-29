@@ -1,7 +1,6 @@
 var app = app || {};
 
 (function () {
-
   var todoApp = app.todoApp = React.createClass({
     render: function() {
       return (
