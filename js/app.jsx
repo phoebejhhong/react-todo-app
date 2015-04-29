@@ -13,10 +13,16 @@ var app = app || {};
   var TodoApp = React.createClass({
     render: function() {
       return (
-        <div className="todoApp">
-          <input className="newTodo" type="text"
-            placeholder="What needs to be done?"/>
-          <TodoList />
+        <div id="todoapp">
+          <header id="header">
+            <h1>todos</h1>
+            <input id="new-todo" type="text"
+              placeholder="What needs to be done?"/>
+          </header>
+          <section id="main">
+            <input id="toggle-all" type="checkbox"></input>
+            <TodoList data={this.props.data} />
+          </section>
         </div>
       );
     },
@@ -24,9 +30,17 @@ var app = app || {};
 
   var TodoList = React.createClass({
     render: function() {
+      var todos = this.props.data.map(function(todo) {
+        return (
+          <li completed={todo.completed}>
+            <input className="toggle" type="checkbox" />
+            <label>{todo.text}</label>
+          </li>
+        );
+      });
       return (
-        <ul className="todoList">
-          
+        <ul id="todo-list">
+          {todos}
         </ul>
       );
     },
@@ -35,7 +49,7 @@ var app = app || {};
   var TodoItem = React.createClass({
     render: function() {
       return (
-        <li className="todoItem">
+        <li className="todo-item">
           <p>I am todoItem</p>
         </li>
       );
@@ -43,7 +57,7 @@ var app = app || {};
   });
 
   React.render(
-    <TodoApp data="data" />,
+    <TodoApp data={data} />,
     document.getElementById('todoApp')
   );
 
