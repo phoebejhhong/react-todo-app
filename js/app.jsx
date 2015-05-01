@@ -36,6 +36,7 @@ var app = app || {};
 
     },
     handleNewTodo: function (newTodoText) {
+      console.log(newTodoText);
       var newId = Utils.generateId();
       var oldTodos = this.state.todos;
       var newTodo = {
@@ -59,9 +60,30 @@ var app = app || {};
           console.error(this.props.url, status, err.toString());
         }.bind(this),
       });
+    },
+    handleToggle: function (todoToToggle) {
+      var updatedTodos = this.state.todos.map(function (todo) {
+        if (todo !== todoToToggle) {
+          todo;
+        } else {
+          todo.completed
+          = (todo.completed === "true" ? "false" : "true");
+        };
+      });
 
+      this.setState(updatedTodos);
     },
     render: function() {
+      var that = this;
+      var todos = this.state.todos.map(function(todo) {
+        return (
+          <TodoItem
+            todo={todo}
+            onToggle={that.handleToggle.bind(that,todo)}
+          />
+        );
+      });
+
       return (
         <div id="todoapp">
           <header id="header">
@@ -77,27 +99,12 @@ var app = app || {};
           </header>
           <section id="main">
             <input id="toggle-all" type="checkbox"></input>
-            <TodoList todos={this.state.todos} />
+            <ul id="todo-list">
+              {todos}
+            </ul>
           </section>
           <TodoFooter />
         </div>
-      );
-    },
-  });
-
-  var TodoList = React.createClass({
-    render: function() {
-      var todos = this.props.todos.map(function(todo) {
-        return (
-          <TodoItem
-            todo={todo}
-          />
-        );
-      });
-      return (
-        <ul id="todo-list">
-          {todos}
-        </ul>
       );
     },
   });
@@ -112,6 +119,8 @@ var app = app || {};
           <input
             className="toggle"
             type="checkbox"
+            onClick={this.props.onToggle}
+            checked={todo.completed === "true"}
            />
           <label>{todo.text}</label>
         </li>
