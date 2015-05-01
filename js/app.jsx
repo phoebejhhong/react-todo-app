@@ -3,6 +3,8 @@ var app = app || {};
 (function () {
   var TodoFooter = app.TodoFooter;
 
+  var ENTER_KEY = 13;
+
   var TodoApp = React.createClass({
     getInitialState: function () {
       return {todos: []};
@@ -19,14 +21,20 @@ var app = app || {};
         }.bind(this),
       });
     },
-    handleNewTodo: function (e) {
-      e.preventDefault();
-      var newTodoText = React.findDOMNode(this.refs.text).value.trim();
-      if (!newTodoText) {
+    handleNewTodoKeyDown: function (e) {
+      if (e.which !== ENTER_KEY) {
         return;
-      };
-      React.findDOMNode(this.refs.text).value= '';
+      }
+      e.preventDefault();
 
+      var newTodoText = React.findDOMNode(this.refs.text).value.trim();
+      if (newTodoText) {
+        this.handleNewTodo(newTodoText)
+        React.findDOMNode(this.refs.text).value= '';
+      }
+
+    },
+    handleNewTodo: function (newTodoText) {
       var oldTodos = this.state.todos
       var newTodos = oldTodos.concat([{
         "text": newTodoText,
@@ -40,12 +48,14 @@ var app = app || {};
         <div id="todoapp">
           <header id="header">
             <h1>todos</h1>
-            <form onSubmit={this.handleNewTodo}>
-              <input id="new-todo" type="text" ref="text"
-                placeholder="What needs to be done?"
-                />
-              <input type="submit" value="Post" />
-            </form>
+            <input
+              id="new-todo"
+              type="text"
+              ref="text"
+              placeholder="What needs to be done?"
+              onKeyDown={this.handleNewTodoKeyDown}
+              autofocus="true"
+              />
           </header>
           <section id="main">
             <input id="toggle-all" type="checkbox"></input>
