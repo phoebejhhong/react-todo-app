@@ -2,6 +2,7 @@ var app = app || {};
 
 (function () {
   var TodoFooter = app.TodoFooter;
+  var Utils = app.Utils;
 
   var ENTER_KEY = 13;
 
@@ -35,13 +36,30 @@ var app = app || {};
 
     },
     handleNewTodo: function (newTodoText) {
-      var oldTodos = this.state.todos
-      var newTodos = oldTodos.concat([{
+      var newId = Utils.generateId();
+      var oldTodos = this.state.todos;
+      var newTodo = {
+        "id": newId,
         "text": newTodoText,
         "completed": "false"
-      }]);
+      };
+      var newTodos = oldTodos.concat([newTodo]);
 
       this.setState({todos: newTodos});
+
+      $.ajax({
+        url: this.props.url,
+        method: 'POST',
+        dataType: 'json',
+        data: newTodo,
+        success: function (todos) {
+          this.setState({todos: todos});
+        }.bind(this),
+        error: function (xhr, status, err) {
+          console.error(this.props.url, status, err.toString());
+        }.bind(this),
+      });
+
     },
     render: function() {
       return (
