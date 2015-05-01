@@ -21,3 +21,16 @@ post "/todos.json" do
 
   todos.to_json
 end
+
+put "/todos.json" do
+  todos = JSON.parse(File.read('./todos.json'))
+  updated_todo = JSON.parse(request.body.read)
+  todos.map do |todo|
+    if todo["id"] == updated_todo["id"]
+      todo.each { |field,value| todo[field] = updated_todo[field] }
+    end
+  end
+  File.write('./todos.json', JSON.pretty_generate(todos, :indent => '    '))
+
+  todos.to_json
+end

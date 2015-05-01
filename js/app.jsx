@@ -71,6 +71,19 @@ var app = app || {};
       });
 
       this.setState(updatedTodos);
+
+      $.ajax({
+        url: this.props.url,
+        method: 'PUT',
+        dataType: 'json',
+        data: JSON.stringify(todoToToggle),
+        success: function (todos) {
+          this.setState({todos: todos});
+        }.bind(this),
+        error: function (xhr, status, err) {
+          console.error(this.props.url, status, err.toString());
+        }.bind(this),
+      });
     },
     render: function() {
       var that = this;
