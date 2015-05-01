@@ -1,6 +1,7 @@
 var app = app || {};
 
 (function () {
+  var TodoItem = app.TodoItem;
   var TodoFooter = app.TodoFooter;
   var Utils = app.Utils;
 
@@ -143,25 +144,6 @@ var app = app || {};
             onToggle={that.handleNowShowing.bind(that)}
           />
         </div>
-      );
-    },
-  });
-
-  var TodoItem = React.createClass({
-    render: function() {
-      var todo = this.props.todo;
-      var liClassName = (todo.completed === "true" ? 'completed' : '');
-
-      return (
-        <li className={liClassName}>
-          <input
-            className="toggle"
-            type="checkbox"
-            onClick={this.props.onToggle}
-            checked={todo.completed === "true"}
-           />
-          <label>{todo.text}</label>
-        </li>
       );
     },
   });

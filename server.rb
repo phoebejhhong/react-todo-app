@@ -34,3 +34,13 @@ put "/todos.json" do
 
   todos.to_json
 end
+
+delete "/todos.json" do
+  todos = JSON.parse(File.read('./todos.json'))
+  todo_to_delete = JSON.parse(request.body.read)
+  todos.reject do { |todo| todo["id"] == updated_todo["id"] }
+  end
+  File.write('./todos.json', JSON.pretty_generate(todos, :indent => '    '))
+
+  todos.to_json
+end
