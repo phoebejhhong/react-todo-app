@@ -89,6 +89,26 @@ var app = app || {};
     handleNowShowing: function (newStatus) {
       this.setState({nowShowing: newStatus});
     },
+    deleteTodo: function (todoToDelete) {
+      var updatedTodos = this.state.todos.filter(function (todo) {
+        return todo !== todoToDelete
+      });
+
+      $.ajax({
+        url: this.props.url,
+        method: 'DELETE',
+        dataType: 'json',
+        data: {id: todoToDelete["id"]},
+        success: function (todos) {
+          this.setState({todos: todos});
+        }.bind(this),
+        error: function (xhr, status, err) {
+          console.error(this.props.url, status, err.toString());
+        }.bind(this),
+      });
+
+      this.setState({todos: updatedTodos});
+    },
     render: function() {
       var that = this;
 
@@ -112,8 +132,10 @@ var app = app || {};
       var todoItems = todosToShow.map(function(todo) {
         return (
           <TodoItem
+            key={todo.id}
             todo={todo}
-            onToggle={that.handleToggle.bind(that,todo)}
+            onToggle={that.handleToggle.bind(that, todo)}
+            onDestroy={that.deleteTodo.bind(that, todo)}
           />
         );
       });

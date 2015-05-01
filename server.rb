@@ -37,9 +37,8 @@ end
 
 delete "/todos.json" do
   todos = JSON.parse(File.read('./todos.json'))
-  todo_to_delete = JSON.parse(request.body.read)
-  todos.reject do { |todo| todo["id"] == updated_todo["id"] }
-  end
+  todo_id_to_delete = params["id"]
+  todos = todos.reject { |todo| todo["id"] == todo_id_to_delete }
   File.write('./todos.json', JSON.pretty_generate(todos, :indent => '    '))
 
   todos.to_json

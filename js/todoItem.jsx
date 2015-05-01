@@ -7,7 +7,8 @@ app = app || {};
       var liClassName = (todo.completed === "true" ? 'completed' : '');
 
       return (
-        <li className={liClassName}>
+        <li
+          className={liClassName}>
           <input
             className="toggle"
             type="checkbox"
@@ -15,7 +16,8 @@ app = app || {};
             checked={todo.completed === "true"}
            />
           <label>{todo.text}</label>
-          <button className="destroy" onClick={this.props.onDestroy} />
+          <button className="destroy"
+            onClick={this.props.onDestroy} />
         </li>
       );
     },
