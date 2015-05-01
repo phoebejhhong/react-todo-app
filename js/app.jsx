@@ -8,14 +8,16 @@ var app = app || {};
 
   var TodoApp = React.createClass({
     getInitialState: function () {
-      return {todos: []};
+      return {todos: [], showingTodos: []};
     },
     componentDidMount: function () {
       $.ajax({
         url: this.props.url,
         dataType: 'json',
         success: function (todos) {
-          this.setState({todos: todos});
+          this.setState({todos: todos,
+            showingTodos: todos,
+            nowShowing: "all"});
         }.bind(this),
         error: function (xhr, status, err) {
           console.error(this.props.url, status, err.toString());
@@ -85,9 +87,24 @@ var app = app || {};
         }.bind(this),
       });
     },
+    handleNowShowing: function (newStatus) {
+      this.setState({nowShowing: newStatus});
+      var todosToShow = this.state.todos.filter (function (todo) {
+        switch (newStatus) {
+          case "completed":
+            return todo.completed === "true";
+          case "active":
+            return todo.completed === "false";
+          default:
+            return true;
+        }
+      });
+
+      this.setState({showingTodos: todosToShow});
+    },
     render: function() {
       var that = this;
-      var todos = this.state.todos.map(function(todo) {
+      var todos = this.state.showingTodos.map(function(todo) {
         return (
           <TodoItem
             todo={todo}
@@ -96,10 +113,16 @@ var app = app || {};
         );
       });
 
+      var activeTodoCount = this.state.todos.reduce(function (sum, todo) {
+        return todo.completed === "true" ? sum : sum + 1;
+      }, 0);
+
+      var completedTodoCount = this.state.todos.length - activeTodoCount
+
       return (
         <div id="todoapp">
           <header id="header">
-            <h1>todos</h1>
+            <h1>toodoos</h1>
             <input
               id="new-todo"
               type="text"
@@ -115,7 +138,12 @@ var app = app || {};
               {todos}
             </ul>
           </section>
-          <TodoFooter />
+          <TodoFooter
+            nowShowing={this.state.nowShowing}
+            activeTodoCount={activeTodoCount}
+            completedTodoCount={completedTodoCount}
+            onToggle={that.handleNowShowing.bind(that)}
+          />
         </div>
       );
     },
