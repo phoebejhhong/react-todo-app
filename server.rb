@@ -1,28 +1,23 @@
-require 'webrick'
+require 'sinatra'
 require 'json'
 
-port = ENV['PORT'].nil? ? 3000 : ENV['PORT'].to_i
-
-puts "Server started: http://localhost:#{port}/"
-
-root = File.expand_path './'
-server = WEBrick::HTTPServer.new :Port => port, :DocumentRoot => root
-
-server.mount_proc '/todos.json' do |req, res|
-  todos = JSON.parse(File.read('./todos.json'))
-
-  if req.request_method == 'POST'
-    # Assume it's well formed
-    todos << req.query
-    File.write('./todos.json', JSON.pretty_generate(todos, :indent => '    '))
-  end
-
-  # always return json
-  res['Content-Type'] = 'application/json'
-  res['Cache-Control'] = 'no-cache'
-  res.body = JSON.generate(todos)
+get "/" do
+  send_file "index.html"
 end
 
-trap 'INT' do server.shutdown end
+get "/:dirname/:filename" do
+  send_file params["dirname"] + "/" + params["filename"]
+end
 
-server.start
+get "/:filename" do
+  send_file params["filename"]
+end
+
+post "/todos.json" do
+  todos = JSON.parse(File.read('./todos.json'))
+  new_todo = JSON.parse(request.body.read)
+  todos << new_todo
+  File.write('./todos.json', JSON.pretty_generate(todos, :indent => '    '))
+
+  todos.to_json
+end

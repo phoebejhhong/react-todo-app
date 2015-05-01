@@ -36,7 +36,6 @@ var app = app || {};
 
     },
     handleNewTodo: function (newTodoText) {
-      console.log(newTodoText);
       var newId = Utils.generateId();
       var oldTodos = this.state.todos;
       var newTodo = {
@@ -52,7 +51,7 @@ var app = app || {};
         url: this.props.url,
         method: 'POST',
         dataType: 'json',
-        data: newTodo,
+        data: JSON.stringify(newTodo),
         success: function (todos) {
           this.setState({todos: todos});
         }.bind(this),
