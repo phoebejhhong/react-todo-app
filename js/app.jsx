@@ -8,16 +8,14 @@ var app = app || {};
 
   var TodoApp = React.createClass({
     getInitialState: function () {
-      return {todos: [], showingTodos: []};
+      return {todos: []};
     },
     componentDidMount: function () {
       $.ajax({
         url: this.props.url,
         dataType: 'json',
         success: function (todos) {
-          this.setState({todos: todos,
-            showingTodos: todos,
-            nowShowing: "all"});
+          this.setState({todos: todos, nowShowing: "all"});
         }.bind(this),
         error: function (xhr, status, err) {
           console.error(this.props.url, status, err.toString());
@@ -72,7 +70,7 @@ var app = app || {};
         };
       });
 
-      this.setState(updatedTodos);
+      this.setState({todos: updatedTodos});
 
       $.ajax({
         url: this.props.url,
@@ -89,8 +87,18 @@ var app = app || {};
     },
     handleNowShowing: function (newStatus) {
       this.setState({nowShowing: newStatus});
+    },
+    render: function() {
+      var that = this;
+
+      var activeTodoCount = this.state.todos.reduce(function (sum, todo) {
+        return todo.completed === "true" ? sum : sum + 1;
+      }, 0);
+
+      var completedTodoCount = this.state.todos.length - activeTodoCount;
+
       var todosToShow = this.state.todos.filter (function (todo) {
-        switch (newStatus) {
+        switch (that.state.nowShowing) {
           case "completed":
             return todo.completed === "true";
           case "active":
@@ -100,11 +108,7 @@ var app = app || {};
         }
       });
 
-      this.setState({showingTodos: todosToShow});
-    },
-    render: function() {
-      var that = this;
-      var todos = this.state.showingTodos.map(function(todo) {
+      var todoItems = todosToShow.map(function(todo) {
         return (
           <TodoItem
             todo={todo}
@@ -112,12 +116,6 @@ var app = app || {};
           />
         );
       });
-
-      var activeTodoCount = this.state.todos.reduce(function (sum, todo) {
-        return todo.completed === "true" ? sum : sum + 1;
-      }, 0);
-
-      var completedTodoCount = this.state.todos.length - activeTodoCount
 
       return (
         <div id="todoapp">
@@ -135,7 +133,7 @@ var app = app || {};
           <section id="main">
             <input id="toggle-all" type="checkbox"></input>
             <ul id="todo-list">
-              {todos}
+              {todoItems}
             </ul>
           </section>
           <TodoFooter
