@@ -150,7 +150,7 @@ var app = app || {};
               ref="text"
               placeholder="What needs to be done?"
               onKeyDown={this.handleNewTodoKeyDown}
-              autofocus="true"
+              autoFocus={true}
               />
           </header>
           <section id="main">
