@@ -9,7 +9,8 @@ var app = app || {};
       // only when there is at least one of them
       if (this.props.completedTodoCount > 0) {
         clearCompleteTodosButton = (
-          <button id="clear-completed">
+          <button id="clear-completed"
+            onClick={this.props.onClearCompleted}>
             Clear completed
           </button>
         );

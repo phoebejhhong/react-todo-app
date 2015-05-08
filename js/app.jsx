@@ -63,12 +63,11 @@ var app = app || {};
     },
     handleToggle: function (todoToToggle) {
       var updatedTodos = this.state.todos.map(function (todo) {
-        if (todo !== todoToToggle) {
-          todo;
-        } else {
+        if (todo === todoToToggle) {
           todo.completed
           = (todo.completed === "true" ? "false" : "true");
-        };
+        }
+        return todo;
       });
 
       this.setState({todos: updatedTodos});
@@ -109,9 +108,30 @@ var app = app || {};
 
       this.setState({todos: updatedTodos});
     },
+    clearCompleted: function() {
+      var that = this;
+      todoIdsToDelete = this.state.todos.filter(function (todo) {
+        return todo.completed == "true";
+      }).map(function (todo) {
+        return todo.id;
+      });
+
+      $.ajax({
+        url: that.props.url,
+        method: 'DELETE',
+        dataType: 'json',
+        data: {ids: todoIdsToDelete},
+        success: function (todos) {
+          that.setState({todos: todos});
+        },
+        error: function (xhr, status, err) {
+          console.error(that.props.url, status, err.toString());
+        },
+      });
+    },
+
     render: function() {
       var that = this;
-
       var activeTodoCount = this.state.todos.reduce(function (sum, todo) {
         return todo.completed === "true" ? sum : sum + 1;
       }, 0);
@@ -164,6 +184,7 @@ var app = app || {};
             activeTodoCount={activeTodoCount}
             completedTodoCount={completedTodoCount}
             onToggle={that.handleNowShowing.bind(that)}
+            onClearCompleted={that.clearCompleted.bind(that)}
           />
         </div>
       );
