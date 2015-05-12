@@ -1,5 +1,6 @@
 require 'sinatra'
 require 'json'
+require 'byebug'
 
 get "/" do
   send_file "index.html"
@@ -35,6 +36,13 @@ put "/todos.json" do
   todos.to_json
 end
 
+put "/toggle-all" do
+  updated_todos = JSON.parse(request.body.read)
+  File.write('./todos.json', JSON.pretty_generate(updated_todos, :indent => '    '))
+
+  updated_todos.to_json
+end
+
 delete "/todos.json" do
   todos = JSON.parse(File.read('./todos.json'))
   if params["id"]
@@ -46,7 +54,7 @@ delete "/todos.json" do
       params["ids"].include?(todo["id"])
     end
   end
-  
+
   File.write('./todos.json', JSON.pretty_generate(updatedTodos, :indent => '    '))
 
   updatedTodos.to_json

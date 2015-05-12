@@ -129,7 +129,29 @@ var app = app || {};
         },
       });
     },
+    toggleAll: function (event) {
+      var that = this;
 
+      var updatedTodos = this.state.todos.map(function (todo) {
+        todo.completed = event.target.checked.toString();
+        return todo;
+      });
+
+      this.setState({todo: updatedTodos});
+
+      $.ajax({
+        url: "toggle-all",
+        method: 'PUT',
+        dataType: 'json',
+        data: JSON.stringify(updatedTodos),
+        success: function (todos) {
+          that.setState({todos: todos});
+        }.bind(that),
+        error: function (xhr, status, err) {
+          console.error(that.props.url, status, err.toString());
+        }.bind(that),
+      });
+    },
     render: function() {
       var that = this;
       var activeTodoCount = this.state.todos.reduce(function (sum, todo) {
@@ -174,7 +196,9 @@ var app = app || {};
               />
           </header>
           <section id="main">
-            <input id="toggle-all" type="checkbox"></input>
+            <input id="toggle-all" type="checkbox"
+            onClick={this.toggleAll}
+            checked={activeTodoCount === 0}></input>
             <ul id="todo-list">
               {todoItems}
             </ul>
