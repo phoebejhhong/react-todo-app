@@ -1,6 +1,5 @@
 require 'sinatra'
 require 'json'
-require 'byebug'
 
 get "/" do
   send_file "index.html"
